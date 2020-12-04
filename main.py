@@ -3,16 +3,18 @@ from datetime import date
 def day2():
     with open('input/day2.txt') as f:
         passwords = f.readlines()
-    answer = 0
+    part_1 = 0
+    part_2 = 0
     for password in passwords:
         constraint, letter, password = password.split()
-        pos1, pos2 = constraint.split('-')
+        val1, val2 = constraint.split('-')
         letter = letter[0]
-
-        if (password[int(pos1) - 1] == letter) ^ (password[int(pos2) - 1] ==
+        if int(val1) <= password.count(letter) <= int(val2):
+            part_1 += 1
+        if (password[int(val1) - 1] == letter) ^ (password[int(val2) - 1] ==
                                                   letter):
-            answer += 1
-    return answer
+            part_2 += 1
+    return part_1, part_2
     
 
 def aocday3():
