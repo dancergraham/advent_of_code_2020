@@ -1,5 +1,20 @@
 from datetime import date
 
+def day2():
+    with open('input/day2.txt') as f:
+        passwords = f.readlines()
+    answer = 0
+    for password in passwords:
+        constraint, letter, password = password.split()
+        pos1, pos2 = constraint.split('-')
+        letter = letter[0]
+
+        if (password[int(pos1) - 1] == letter) ^ (password[int(pos2) - 1] ==
+                                                  letter):
+            answer += 1
+    return answer
+    
+
 def aocday3():
     with open('input/day3.txt') as f:
         input_data = [list(line.strip()) for line in f.readlines()]
@@ -26,6 +41,6 @@ if __name__ == '__main__':
     today = date.today()
     if today.month == 12:
         print('Merry Christmas')
-    print(aocday3())
+    print(day2())
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
