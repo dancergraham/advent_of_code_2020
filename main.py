@@ -1,18 +1,18 @@
 from datetime import date
 
+
 def day1():
     with open(r'input/day1.txt') as f:
         numbers = sorted(int(x) for x in f.readlines())
-    for i, num1 in enumerate( numbers):
-        for j, num2 in enumerate(numbers[i+1:]):
+    for i, num1 in enumerate(numbers):
+        for j, num2 in enumerate(numbers[i + 1:]):
             if (num1 + num2) == 2020:
                 part_1 = num1 * num2
-            for num3 in numbers[i+j:]:
+            for num3 in numbers[i + j:]:
                 if (num1 + num2 + num3) == 2020:
                     part_2 = num1 * num2 * num3
                     break
     return part_1, part_2
-
 
 
 def day2():
@@ -30,15 +30,15 @@ def day2():
                                                   letter):
             part_2 += 1
     return part_1, part_2
-    
+
 
 def day3():
     with open('input/day3.txt') as f:
         input_data = [list(line.strip()) for line in f.readlines()]
-    product =1
+    product = 1
     answers = {}
-    for dx, dy in [(1,1),(3,1),(5,1),(7,1),(1,2)]:
-        answer, x, y = 0,0,0
+    for dx, dy in [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]:
+        answer, x, y = 0, 0, 0
         while True:
             x = (x + dx) % len(input_data[0])
             y += dy
@@ -46,10 +46,10 @@ def day3():
                 answer += (input_data[y][x] == '#')
 
             except IndexError:
-                answers[(dx,dy)] = answer
+                answers[(dx, dy)] = answer
                 product *= answer
                 break
-    part_1 = answers[(3,1)]
+    part_1 = answers[(3, 1)]
     return part_1, product
 
 
