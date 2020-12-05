@@ -53,11 +53,62 @@ def day3():
     return part_1, product
 
 
+def day4(input_values):
+    def isvalid(field):
+        k, v = field.split(':')
+        valid = {'byr': lambda x: 1920 <= int(x) <= 2002,
+                 'iyr': lambda x: 2010 <= int(x) <= 2020,
+                 'eyr': lambda x: 2020 <= int(x) <= 2030,
+                 'hgt': lambda x: (x[-2:] in ('cm', 'in')) and valid[x[-2:]](x[:-2]),
+                 'cm': lambda x: 150 <= int(x) <= 193,
+                 'in': lambda x: 59 <= int(x) <= 76,
+                 'hcl': lambda x: (x[0] == '#' and len(x) == 7 and all(c in 'abcdef0123456789' for c in x[1:])),
+                 'ecl': lambda x: x in {'amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'},
+                 'pid': lambda x: len(x) == 9 and bool(int(x)),
+                 'cid': lambda x: True,
+                 }
+        return valid[k](v)
+
+    part_1, part_2 = 0, 0
+
+    with open(r"input/day4.txt") as f:
+        _input = [x.strip() for x in f.read().split('\n\n')]
+    passports = []
+    required = {'hcl', 'hgt', 'ecl', 'byr', 'iyr', 'eyr', 'pid'}
+
+    for line in _input:
+        fields = line.split()
+        passport = {field.split(':')[0] for field in fields}
+        valid_passport = {field.split(':')[0] for field in fields if isvalid(field)}
+        if not (required - passport):
+            part_1 += 1
+        if not (required - valid_passport):
+            part_2 += 1
+    return part_1, part_2
+
+
+def day5(input_values) -> tuple:
+    part_1 = None
+    part_2 = None
+
+    return part_1, part_2
+
+
+day5_test_values = {"FBFBBFFRLR": 357,
+                    "BFFFBBFRRR": 567,
+                    "FFFBBBFRRR": 119,
+                    "BBFFBBFRLL": 820,
+                    }
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     today = date.today()
     if today.month == 12:
         print('Merry Christmas')
-    print(day1())
+    with open('input/day4.txt') as f:
+        input_values = f.readlines()
+    # for input_value, answer in day5_test_values.items():
+    #     assert day5([input_value, ]) == answer, None
+    print(day4(input_values))
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
