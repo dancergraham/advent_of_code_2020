@@ -87,10 +87,28 @@ def day4(input_values):
     return part_1, part_2
 
 
-def day5(input_values) -> tuple:
-    part_1 = None
+def day5(input_values : list) -> tuple:
+    """
+    Build a list of binary numbers, sorted lexigraphically, e.g. for left-right:
+    ['000', '001', '010', '011', '100', '101', '110', '111']
+    Translate to LR (or FB)
+    build a dictionary mapping translated string to index {'LLL' : 0, ...}
+    calculate answer
+    """
+    part_1 = 0
     part_2 = None
+    lr_list = sorted(bin(x)[2:].zfill(3) for x in range(8))
+    lr_trans = str.maketrans('01', 'LR')
+    lr_dict = {s.translate(lr_trans):i for i, s in enumerate(lr_list)}
+    fb_list = sorted(bin(x)[2:].zfill(7) for x in range(128))
+    fb_trans = str.maketrans('01', 'FB')
+    fb_dict = {s.translate(fb_trans):i for i, s in enumerate(fb_list)}
 
+    for boarding_pass in input_values:
+        row = fb_dict[boarding_pass.strip()[:7]]
+        column = lr_dict[boarding_pass.strip()[7:]]
+        seat_id = (8 * row) + column
+        part_1 = max(part_1, seat_id)
     return part_1, part_2
 
 
@@ -105,10 +123,14 @@ if __name__ == '__main__':
     today = date.today()
     if today.month == 12:
         print('Merry Christmas')
-    with open('input/day4.txt') as f:
+    with open('input/day5.txt') as f:
         input_values = f.readlines()
-    # for input_value, answer in day5_test_values.items():
-    #     assert day5([input_value, ]) == answer, None
-    print(day4(input_values))
+    for input_value, answer in day5_test_values.items():
+        try:
+            assert day5([input_value, ]) == (answer, None)
+        except Exception as e:
+            print(input_value, answer, day5([input_value, ]))
+            raise e
+    print(day5(input_values))
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
