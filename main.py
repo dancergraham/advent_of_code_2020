@@ -103,12 +103,23 @@ def day5(input_values : list) -> tuple:
     fb_list = sorted(bin(x)[2:].zfill(7) for x in range(128))
     fb_trans = str.maketrans('01', 'FB')
     fb_dict = {s.translate(fb_trans):i for i, s in enumerate(fb_list)}
+    seat_ids = []
 
     for boarding_pass in input_values:
         row = fb_dict[boarding_pass.strip()[:7]]
         column = lr_dict[boarding_pass.strip()[7:]]
         seat_id = (8 * row) + column
+        seat_ids.append(seat_id)
         part_1 = max(part_1, seat_id)
+    seat_ids.sort()
+    part_2 = seat_ids[0]
+    for seat_id in seat_ids:
+        if seat_id > (part_2):
+            part_2 = seat_id -1
+            break
+        else:
+            part_2 += 1
+
     return part_1, part_2
 
 
@@ -118,7 +129,7 @@ day5_test_values = {"FBFBBFFRLR": 357,
                     "BBFFBBFRLL": 820,
                     }
 
-# Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
     today = date.today()
     if today.month == 12:
@@ -127,10 +138,8 @@ if __name__ == '__main__':
         input_values = f.readlines()
     for input_value, answer in day5_test_values.items():
         try:
-            assert day5([input_value, ]) == (answer, None)
+            assert day5([input_value, ])[0] == answer
         except Exception as e:
             print(input_value, answer, day5([input_value, ]))
             raise e
     print(day5(input_values))
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
