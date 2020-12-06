@@ -1,12 +1,13 @@
 from datetime import date
 
+
 class Any():
     def __eq__(self, other):
         return True
-    def __ne__(self, other):
-        return False
+
 
 any = Any()
+
 
 def day1():
     with open(r'input/day1.txt') as f:
@@ -94,7 +95,7 @@ def day4(input_values):
     return part_1, part_2
 
 
-def day5(input_values : list) -> tuple:
+def day5(input_values: list) -> tuple:
     """
     Build a list of binary numbers, sorted lexigraphically, e.g. for left-right:
     ['000', '001', '010', '011', '100', '101', '110', '111']
@@ -106,10 +107,10 @@ def day5(input_values : list) -> tuple:
     part_2 = None
     lr_list = sorted(bin(x)[2:].zfill(3) for x in range(8))
     lr_trans = str.maketrans('01', 'LR')
-    lr_dict = {s.translate(lr_trans):i for i, s in enumerate(lr_list)}
+    lr_dict = {s.translate(lr_trans): i for i, s in enumerate(lr_list)}
     fb_list = sorted(bin(x)[2:].zfill(7) for x in range(128))
     fb_trans = str.maketrans('01', 'FB')
-    fb_dict = {s.translate(fb_trans):i for i, s in enumerate(fb_list)}
+    fb_dict = {s.translate(fb_trans): i for i, s in enumerate(fb_list)}
     seat_ids = []
 
     for boarding_pass in input_values:
@@ -122,7 +123,7 @@ def day5(input_values : list) -> tuple:
     part_2 = seat_ids[0]
     for seat_id in seat_ids:
         if seat_id > (part_2):
-            part_2 = seat_id -1
+            part_2 = seat_id - 1
             break
         else:
             part_2 += 1
@@ -136,34 +137,35 @@ day5_test_values = {"FBFBBFFRLR": (357, any),
                     "BBFFBBFRLL": (820, any),
                     }
 
-def day6(input_values : str) -> tuple:
+
+def day6(input_values: str) -> tuple:
     """template"""
     part_1 = 0
     part_2 = 0
-    ...
     groups = input_values.split('\n\n')
 
     for group in groups:
         person_yesses = [set(person.strip()) for person in group.split('\n')]
-        all_yesses = person_yesses[0].intersection(*person_yesses)
+        all_yesses = person_yesses.pop().intersection(*person_yesses)
         part_2 += len(all_yesses)
         group_yesses = set(group.replace('\n', ''))
-        print(group_yesses)
         part_1 += len(group_yesses)
 
-
     return part_1, part_2
+
 
 day6_test_values = {"abc\n\na\nb\nc\n\nab\nac\n\na\na\na\na\n\nb": (11, 6),
                     }
 
-def dayx(input_values : list) -> tuple:
+
+def dayx(input_values: list) -> tuple:
     """template"""
     part_1 = None
     part_2 = None
     ...
 
     return part_1, part_2
+
 
 if __name__ == '__main__':
     today = date.today()
