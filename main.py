@@ -1,5 +1,12 @@
 from datetime import date
 
+class Any():
+    def __eq__(self, other):
+        return True
+    def __ne__(self, other):
+        return False
+
+any = Any()
 
 def day1():
     with open(r'input/day1.txt') as f:
@@ -123,23 +130,51 @@ def day5(input_values : list) -> tuple:
     return part_1, part_2
 
 
-day5_test_values = {"FBFBBFFRLR": 357,
-                    "BFFFBBFRRR": 567,
-                    "FFFBBBFRRR": 119,
-                    "BBFFBBFRLL": 820,
+day5_test_values = {"FBFBBFFRLR": (357, any),
+                    "BFFFBBFRRR": (567, any),
+                    "FFFBBBFRRR": (119, any),
+                    "BBFFBBFRLL": (820, any),
                     }
 
+def day6(input_values : str) -> tuple:
+    """template"""
+    part_1 = 0
+    part_2 = 0
+    ...
+    groups = input_values.split('\n\n')
+
+    for group in groups:
+        person_yesses = [set(person.strip()) for person in group.split('\n')]
+        all_yesses = person_yesses[0].intersection(*person_yesses)
+        part_2 += len(all_yesses)
+        group_yesses = set(group.replace('\n', ''))
+        print(group_yesses)
+        part_1 += len(group_yesses)
+
+
+    return part_1, part_2
+
+day6_test_values = {"abc\n\na\nb\nc\n\nab\nac\n\na\na\na\na\n\nb": (11, 6),
+                    }
+
+def dayx(input_values : list) -> tuple:
+    """template"""
+    part_1 = None
+    part_2 = None
+    ...
+
+    return part_1, part_2
 
 if __name__ == '__main__':
     today = date.today()
     if today.month == 12:
         print('Merry Christmas')
-    with open('input/day5.txt') as f:
-        input_values = f.readlines()
-    for input_value, answer in day5_test_values.items():
+    for input_value, answer in day6_test_values.items():
         try:
-            assert day5([input_value, ])[0] == answer
+            assert answer == day6(input_value)
         except Exception as e:
-            print(input_value, answer, day5([input_value, ]))
+            print(input_value, answer, day6([input_value, ]))
             raise e
-    print(day5(input_values))
+    with open('input/day6.txt') as f:
+        input_values = f.read()
+    print(day6(input_values))
