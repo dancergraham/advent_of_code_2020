@@ -5,7 +5,6 @@ class Any():
     def __eq__(self, other):
         return True
 
-
 any = Any()
 
 
@@ -159,7 +158,14 @@ day6_test_values = {"abc\n\na\nb\nc\n\nab\nac\n\na\na\na\na\n\nb": (11, 6),
 
 
 def day7(input_values: str) -> tuple:
-    """template"""
+    """Build a graph of bags, find the set of unique parents, recursively find children"""
+    def number_of_children(bag) -> int:
+        """recursively find the number of child bags"""
+        nonlocal bags
+        children = 0
+        for child_bag, number in bags[bag].items():
+            children += number * (number_of_children(child_bag) +1)
+        return children
     part_1 = None
     part_2 = None
     lines = input_values.replace('bags', 'bag').split('\n')
@@ -180,10 +186,18 @@ def day7(input_values: str) -> tuple:
 
     print(can_contain)
     part_1 = len(set(can_contain)) -1
+    part_2 = number_of_children('shiny gold bag')
     return part_1, part_2
 
 
-day7_test_values = {"""light red bags contain 1 bright white bag, 2 muted yellow bags.\ndark orange bags contain 3 bright white bags, 4 muted yellow bags.\nbright white bags contain 1 shiny gold bag.\nmuted yellow bags contain 2 shiny gold bags, 9 faded blue bags.\nshiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.\ndark olive bags contain 3 faded blue bags, 4 dotted black bags.\nvibrant plum bags contain 5 faded blue bags, 6 dotted black bags.\nfaded blue bags contain no other bags.\ndotted black bags contain no other bags.""": (4, any),
+day7_test_values = {"""light red bags contain 1 bright white bag, 2 muted yellow bags.\ndark orange bags contain 3 bright white bags, 4 muted yellow bags.\nbright white bags contain 1 shiny gold bag.\nmuted yellow bags contain 2 shiny gold bags, 9 faded blue bags.\nshiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.\ndark olive bags contain 3 faded blue bags, 4 dotted black bags.\nvibrant plum bags contain 5 faded blue bags, 6 dotted black bags.\nfaded blue bags contain no other bags.\ndotted black bags contain no other bags.""": (4, 32),
+                    """shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.""" : (any, 126)
                     }
 
 
