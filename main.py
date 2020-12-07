@@ -158,7 +158,36 @@ day6_test_values = {"abc\n\na\nb\nc\n\nab\nac\n\na\na\na\na\n\nb": (11, 6),
                     }
 
 
-def dayx(input_values: list) -> tuple:
+def day7(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    part_2 = None
+    lines = input_values.replace('bags', 'bag').split('\n')
+    bags = {}
+    for line in lines:
+        container, contents = line.strip('.').split(' contain ')
+        if contents == 'no other bag':
+            bags[container] = {}
+            continue
+        contents = {bag[2:] : int(bag[0]) for bag in contents.split(', ')}
+        bags[container] = contents
+    print(bags)
+    can_contain = ['shiny gold bag',]
+    for target in can_contain:
+        for bag in bags.keys():
+            if target in bags[bag].keys():
+                can_contain.append(bag)
+
+    print(can_contain)
+    part_1 = len(set(can_contain)) -1
+    return part_1, part_2
+
+
+day7_test_values = {"""light red bags contain 1 bright white bag, 2 muted yellow bags.\ndark orange bags contain 3 bright white bags, 4 muted yellow bags.\nbright white bags contain 1 shiny gold bag.\nmuted yellow bags contain 2 shiny gold bags, 9 faded blue bags.\nshiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.\ndark olive bags contain 3 faded blue bags, 4 dotted black bags.\nvibrant plum bags contain 5 faded blue bags, 6 dotted black bags.\nfaded blue bags contain no other bags.\ndotted black bags contain no other bags.""": (4, any),
+                    }
+
+
+def dayx(input_values: str) -> tuple:
     """template"""
     part_1 = None
     part_2 = None
@@ -171,12 +200,12 @@ if __name__ == '__main__':
     today = date.today()
     if today.month == 12:
         print('Merry Christmas')
-    for input_value, answer in day6_test_values.items():
+    for input_value, answer in day7_test_values.items():
         try:
-            assert answer == day6(input_value)
+            assert answer == day7(input_value)
         except Exception as e:
-            print(input_value, answer, day6([input_value, ]))
+            print(input_value, answer, day7(input_value, ))
             raise e
-    with open('input/day6.txt') as f:
+    with open('input/day7.txt') as f:
         input_values = f.read()
-    print(day6(input_values))
+    print(day7(input_values))
