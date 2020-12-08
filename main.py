@@ -1,9 +1,11 @@
 from datetime import date
+from copy import copy
 
 
 class Any():
     def __eq__(self, other):
         return True
+
 
 any = Any()
 
@@ -159,13 +161,15 @@ day6_test_values = {"abc\n\na\nb\nc\n\nab\nac\n\na\na\na\na\n\nb": (11, 6),
 
 def day7(input_values: str) -> tuple:
     """Build a graph of bags, find the set of unique parents, recursively find children"""
+
     def number_of_children(bag) -> int:
         """recursively find the number of child bags"""
         nonlocal bags
         children = 0
         for child_bag, number in bags[bag].items():
-            children += number * (number_of_children(child_bag) +1)
+            children += number * (number_of_children(child_bag) + 1)
         return children
+
     part_1 = None
     part_2 = None
     lines = input_values.replace('bags', 'bag').split('\n')
@@ -175,33 +179,97 @@ def day7(input_values: str) -> tuple:
         if contents == 'no other bag':
             bags[container] = {}
             continue
-        contents = {bag[2:] : int(bag[0]) for bag in contents.split(', ')}
+        contents = {bag[2:]: int(bag[0]) for bag in contents.split(', ')}
         bags[container] = contents
     print(bags)
-    can_contain = ['shiny gold bag',]
+    can_contain = ['shiny gold bag', ]
     for target in can_contain:
         for bag in bags.keys():
             if target in bags[bag].keys():
                 can_contain.append(bag)
 
     print(can_contain)
-    part_1 = len(set(can_contain)) -1
+    part_1 = len(set(can_contain)) - 1
     part_2 = number_of_children('shiny gold bag')
     return part_1, part_2
 
 
-day7_test_values = {"""light red bags contain 1 bright white bag, 2 muted yellow bags.\ndark orange bags contain 3 bright white bags, 4 muted yellow bags.\nbright white bags contain 1 shiny gold bag.\nmuted yellow bags contain 2 shiny gold bags, 9 faded blue bags.\nshiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.\ndark olive bags contain 3 faded blue bags, 4 dotted black bags.\nvibrant plum bags contain 5 faded blue bags, 6 dotted black bags.\nfaded blue bags contain no other bags.\ndotted black bags contain no other bags.""": (4, 32),
-                    """shiny gold bags contain 2 dark red bags.
+day7_test_values = {
+    """light red bags contain 1 bright white bag, 2 muted yellow bags.\ndark orange bags contain 3 bright white bags, 4 muted yellow bags.\nbright white bags contain 1 shiny gold bag.\nmuted yellow bags contain 2 shiny gold bags, 9 faded blue bags.\nshiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.\ndark olive bags contain 3 faded blue bags, 4 dotted black bags.\nvibrant plum bags contain 5 faded blue bags, 6 dotted black bags.\nfaded blue bags contain no other bags.\ndotted black bags contain no other bags.""": (
+    4, 32),
+    """shiny gold bags contain 2 dark red bags.
 dark red bags contain 2 dark orange bags.
 dark orange bags contain 2 dark yellow bags.
 dark yellow bags contain 2 dark green bags.
 dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
-dark violet bags contain no other bags.""" : (any, 126)
+dark violet bags contain no other bags.""": (any, 126)
+    }
+
+
+def day8(input_values: str) -> tuple:
+    """Boot loader"""
+
+    def parse(cmd, val):
+        if cmd == 'acc':
+            return val, 1
+        elif cmd == 'jmp':
+            return 0, val
+        elif cmd == 'nop':
+            return 0, 1
+        print(cmd)
+        raise NotImplementedError
+
+    commands = input_values.splitlines()
+    part_1 = 0
+    executed = set()
+    index = 0
+    while True:
+        command, value = commands[index].split(' ')
+        increment, jump = parse(command, int(value))
+        index += jump
+        if index in executed:
+            break
+        part_1 += increment
+        executed.add(index)
+
+    for i, line in enumerate(commands):
+        modified_commands = copy(commands)
+        switch = {'nop': 'jmp', 'jmp': 'nop'}
+        if line[:3] != 'acc':
+            modified_commands[i] = switch[line[:3]] + line[3:]
+        else:
+            continue
+        executed = set()
+        index = 0
+        part_2 = 0
+        while True:
+            command, value = modified_commands[index].split(' ')
+            increment, jump = parse(command, int(value))
+            part_2 += increment
+            index += jump
+            if index in executed:
+                break
+            elif index >= len(commands):
+                return part_1, part_2
+
+            executed.add(index)
+
+
+day8_test_values = {"""nop +0
+acc +1
+jmp +4
+acc +3
+jmp -3
+acc -99
+acc +1
+jmp -4
+acc +6
+""": (5, 8),
                     }
 
 
-def dayx(input_values: str) -> tuple:
+def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
     part_2 = None
@@ -210,16 +278,20 @@ def dayx(input_values: str) -> tuple:
     return part_1, part_2
 
 
+dayx_test_values = {"""
+""": (any, any),
+                    }
+
 if __name__ == '__main__':
     today = date.today()
     if today.month == 12:
         print('Merry Christmas')
-    for input_value, answer in day7_test_values.items():
+    for input_value, answer in day8_test_values.items():
         try:
-            assert answer == day7(input_value)
+            assert answer == day8(input_value)
         except Exception as e:
-            print(input_value, answer, day7(input_value, ))
+            print(input_value, answer, day8(input_value, ))
             raise e
-    with open('input/day7.txt') as f:
+    with open('input/day8.txt') as f:
         input_values = f.read()
-    print(day7(input_values))
+    print(day8(input_values))
