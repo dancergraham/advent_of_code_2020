@@ -297,12 +297,22 @@ def day9(input_values: str) -> tuple:
                 break
         chunk.append(num)
 
-    return part_1, part_2
+    mini_maxi_sums = []
+    for num in numbers:
+        for i, mms in enumerate(mini_maxi_sums):
+            mini, maxi, summ = mms
+            if summ == part_1:
+                part_2 = mini + maxi
+                return part_1, part_2
+            mini_maxi_sums[i] = (min(mini, num), max(maxi, num), summ+num)
+        mini_maxi_sums.append((num, num, num))
+
+
 
 
 day9_test_values = {"""35\n20\n15\n25\n47\n40\n62\n55\n65\n95\n102\n117
 150\n182\n127\n219\n299\n277\n309\n576
-""": (127, any),
+""": (127, 62),
                     }
 
 
