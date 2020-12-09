@@ -1,10 +1,10 @@
-from datetime import date
-from copy import copy
 from collections import deque
+from copy import copy
+from datetime import date
 
 
-class Any():
-    """Any object as a substitute for the as-yet unknown answer to a question during testing """
+class Anything():
+    """Anythingobject as a substitute for the as-yet unknown answer to a question during testing """
 
     def __eq__(self, other):
         return True
@@ -13,7 +13,7 @@ class Any():
         return "<Any object> : always returns True"
 
 
-any = Any()
+anything = Anything()
 
 
 def day1():
@@ -138,10 +138,10 @@ def day5(input_values: list) -> tuple:
     return part_1, part_2
 
 
-day5_test_values = {"FBFBBFFRLR": (357, any),
-                    "BFFFBBFRRR": (567, any),
-                    "FFFBBBFRRR": (119, any),
-                    "BBFFBBFRLL": (820, any),
+day5_test_values = {"FBFBBFFRLR": (357, anything),
+                    "BFFFBBFRRR": (567, anything),
+                    "FFFBBBFRRR": (119, anything),
+                    "BBFFBBFRLL": (820, anything),
                     }
 
 
@@ -209,7 +209,7 @@ dark orange bags contain 2 dark yellow bags.
 dark yellow bags contain 2 dark green bags.
 dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
-dark violet bags contain no other bags.""": (any, 126)
+dark violet bags contain no other bags.""": (anything, 126)
 }
 
 
@@ -326,7 +326,7 @@ def day(input_values: str) -> tuple:
 
 
 dayx_test_values = {"""
-""": (any, any),
+""": (anything, anything),
                     }
 
 if __name__ == '__main__':
