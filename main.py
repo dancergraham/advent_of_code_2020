@@ -1,10 +1,16 @@
 from datetime import date
 from copy import copy
+from collections import deque
 
 
 class Any():
+    """Any object as a substitute for the as-yet unknown answer to a question during testing """
+
     def __eq__(self, other):
         return True
+
+    def __repr__(self):
+        return "<Any object> : always returns True"
 
 
 any = Any()
@@ -196,7 +202,7 @@ def day7(input_values: str) -> tuple:
 
 day7_test_values = {
     """light red bags contain 1 bright white bag, 2 muted yellow bags.\ndark orange bags contain 3 bright white bags, 4 muted yellow bags.\nbright white bags contain 1 shiny gold bag.\nmuted yellow bags contain 2 shiny gold bags, 9 faded blue bags.\nshiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.\ndark olive bags contain 3 faded blue bags, 4 dotted black bags.\nvibrant plum bags contain 5 faded blue bags, 6 dotted black bags.\nfaded blue bags contain no other bags.\ndotted black bags contain no other bags.""": (
-    4, 32),
+        4, 32),
     """shiny gold bags contain 2 dark red bags.
 dark red bags contain 2 dark orange bags.
 dark orange bags contain 2 dark yellow bags.
@@ -204,7 +210,7 @@ dark yellow bags contain 2 dark green bags.
 dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags.""": (any, 126)
-    }
+}
 
 
 def day8(input_values: str) -> tuple:
@@ -236,8 +242,8 @@ def day8(input_values: str) -> tuple:
     for i, line in enumerate(commands):
         modified_commands = copy(commands)
         switch = {'nop': 'jmp', 'jmp': 'nop'}
-        if line[:3] != 'acc':
-            modified_commands[i] = switch[line[:3]] + line[3:]
+        if (cmd := line[:3]) != 'acc':
+            modified_commands[i] = switch[cmd] + line[3:]
         else:
             continue
         executed = set()
@@ -269,6 +275,37 @@ acc +6
                     }
 
 
+def day9(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    part_2 = None
+    numbers = [int(line) for line in input_values.splitlines()]
+    if len(input_values) < 1000:
+        preamble = 5  # test data
+    else:
+        preamble = 25  # real data
+    chunk = deque(maxlen=preamble)
+    for num in numbers:
+        if part_1:
+            break
+        if len(chunk) == preamble:
+            for num1 in chunk:
+                if (num - num1) in chunk:
+                    break
+            else:
+                part_1 = num
+                break
+        chunk.append(num)
+
+    return part_1, part_2
+
+
+day9_test_values = {"""35\n20\n15\n25\n47\n40\n62\n55\n65\n95\n102\n117
+150\n182\n127\n219\n299\n277\n309\n576
+""": (127, any),
+                    }
+
+
 def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
@@ -286,12 +323,13 @@ if __name__ == '__main__':
     today = date.today()
     if today.month == 12:
         print('Merry Christmas')
-    for input_value, answer in day8_test_values.items():
+    for input_value, answer in day9_test_values.items():
         try:
-            assert answer == day8(input_value)
+            assert answer == day9(input_value)
+            print(answer, 'Test Passed')
         except Exception as e:
-            print(input_value, answer, day8(input_value, ))
+            print(input_value, answer, day9(input_value, ))
             raise e
-    with open('input/day8.txt') as f:
+    with open('input/day9.txt') as f:
         input_values = f.read()
-    print(day8(input_values))
+    print(day9(input_values))
