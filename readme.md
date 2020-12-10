@@ -2,8 +2,8 @@
 
 https://adventofcode.com/2020
 
-Solutions using Python, aiming for:
+Solutions using Python 3.8, aiming for:
 
-- Rapid solution (I am busy!)
+- Rapid coding (I am busy!)
 - Readability
 - Learning something new
