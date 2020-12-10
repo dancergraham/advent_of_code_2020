@@ -17,6 +17,7 @@ anything = Anything()
 
 test_values = {}
 
+
 def day1():
     with open(r'input/day1.txt') as f:
         numbers = sorted(int(x) for x in f.readlines())
@@ -305,7 +306,7 @@ def day9(input_values: str) -> tuple:
             if summ == part_1:
                 part_2 = mini + maxi
                 return part_1, part_2
-            mini_maxi_sums[i] = (min(mini, num), max(maxi, num), summ+num)
+            mini_maxi_sums[i] = (min(mini, num), max(maxi, num), summ + num)
         mini_maxi_sums.append((num, num, num))
 
 
