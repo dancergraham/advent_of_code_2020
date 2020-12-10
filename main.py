@@ -317,9 +317,7 @@ test_values[9] = {"""35\n20\n15\n25\n47\n40\n62\n55\n65\n95\n102\n117
 
 
 def day10(input_values: str) -> tuple:
-    """template"""
-    part_1 = None
-    part_2 = None
+    """build list of joltages and differences"""
     jolts = [0, ] + sorted(int(x) for x in input_values.splitlines())
     jolts.append(jolts[-1] + 3)
     difs = [j1 - j0 for j0, j1 in zip(jolts[:-1], jolts[1:])]
