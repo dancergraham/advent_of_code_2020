@@ -10,7 +10,7 @@ class Anything():
         return True
 
     def __repr__(self):
-        return "<Any object> : always returns True"
+        return "<Anything object> : always returns True"
 
 
 anything = Anything()
@@ -139,11 +139,11 @@ def day5(input_values: list) -> tuple:
     return part_1, part_2
 
 
-day5_test_values = {"FBFBBFFRLR": (357, anything),
-                    "BFFFBBFRRR": (567, anything),
-                    "FFFBBBFRRR": (119, anything),
-                    "BBFFBBFRLL": (820, anything),
-                    }
+test_values[5] = {"FBFBBFFRLR": (357, anything),
+                  "BFFFBBFRRR": (567, anything),
+                  "FFFBBBFRRR": (119, anything),
+                  "BBFFBBFRLL": (820, anything),
+                  }
 
 
 def day6(input_values: str) -> tuple:
@@ -162,8 +162,8 @@ def day6(input_values: str) -> tuple:
     return part_1, part_2
 
 
-day6_test_values = {"abc\n\na\nb\nc\n\nab\nac\n\na\na\na\na\n\nb": (11, 6),
-                    }
+test_values[6] = {"abc\n\na\nb\nc\n\nab\nac\n\na\na\na\na\n\nb": (11, 6),
+                  }
 
 
 def day7(input_values: str) -> tuple:
@@ -201,7 +201,7 @@ def day7(input_values: str) -> tuple:
     return part_1, part_2
 
 
-day7_test_values = {
+test_values[7] = {
     """light red bags contain 1 bright white bag, 2 muted yellow bags.\ndark orange bags contain 3 bright white bags, 4 muted yellow bags.\nbright white bags contain 1 shiny gold bag.\nmuted yellow bags contain 2 shiny gold bags, 9 faded blue bags.\nshiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.\ndark olive bags contain 3 faded blue bags, 4 dotted black bags.\nvibrant plum bags contain 5 faded blue bags, 6 dotted black bags.\nfaded blue bags contain no other bags.\ndotted black bags contain no other bags.""": (
         4, 32),
     """shiny gold bags contain 2 dark red bags.
@@ -263,7 +263,7 @@ def day8(input_values: str) -> tuple:
             executed.add(index)
 
 
-day8_test_values = {"""nop +0
+test_values[8] = {"""nop +0
 acc +1
 jmp +4
 acc +3
@@ -273,7 +273,7 @@ acc +1
 jmp -4
 acc +6
 """: (5, 8),
-                    }
+                  }
 
 
 def day9(input_values: str) -> tuple:
@@ -324,6 +324,16 @@ def day10(input_values: str) -> tuple:
     difs = [j1 - j0 for j0, j1 in zip(jolts[:-1], jolts[1:])]
     part_1 = difs.count(1) * difs.count(3)
 
+    # Dynamic programming approach
+    combos = {0: 1}
+    for j in jolts[1:]:
+        combo = 0
+        for joltage in range(max(0, j - 3), j):
+            if joltage in jolts:
+                combo += combos[joltage]
+        combos[j] = combo
+    part_2 = combos[max(jolts)]
+
     return part_1, part_2
 
 
@@ -337,7 +347,7 @@ test_values[10] = {"""16
 19
 6
 12
-4""": (35, anything),
+4""": (35, 8),
                    }
 
 
