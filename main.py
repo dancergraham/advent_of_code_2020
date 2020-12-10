@@ -4,7 +4,7 @@ from datetime import date
 
 
 class Anything():
-    """Anythingobject as a substitute for the as-yet unknown answer to a question during testing """
+    """Anything object as a substitute for the as-yet unknown answer to a question during testing """
 
     def __eq__(self, other):
         return True
@@ -15,6 +15,7 @@ class Anything():
 
 anything = Anything()
 
+test_values = {}
 
 def day1():
     with open(r'input/day1.txt') as f:
@@ -308,12 +309,36 @@ def day9(input_values: str) -> tuple:
         mini_maxi_sums.append((num, num, num))
 
 
-
-
-day9_test_values = {"""35\n20\n15\n25\n47\n40\n62\n55\n65\n95\n102\n117
+test_values[9] = {"""35\n20\n15\n25\n47\n40\n62\n55\n65\n95\n102\n117
 150\n182\n127\n219\n299\n277\n309\n576
 """: (127, 62),
-                    }
+                  }
+
+
+def day10(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    part_2 = None
+    jolts = [0, ] + sorted(int(x) for x in input_values.splitlines())
+    jolts.append(jolts[-1] + 3)
+    difs = [j1 - j0 for j0, j1 in zip(jolts[:-1], jolts[1:])]
+    part_1 = difs.count(1) * difs.count(3)
+
+    return part_1, part_2
+
+
+test_values[10] = {"""16
+10
+15
+5
+1
+11
+7
+19
+6
+12
+4""": (35, anything),
+                   }
 
 
 def day(input_values: str) -> tuple:
@@ -325,21 +350,27 @@ def day(input_values: str) -> tuple:
     return part_1, part_2
 
 
-dayx_test_values = {"""
+test_values[0] = {"""
 """: (anything, anything),
-                    }
+                  }
 
 if __name__ == '__main__':
     today = date.today()
+    day = today.day
+    day_function = day10
     if today.month == 12:
         print('Merry Christmas')
-    for input_value, answer in day9_test_values.items():
+    print(f'https://adventofcode.com/2020/day/{day}')
+    for input_value, answer in test_values[day].items():
         try:
-            assert answer == day9(input_value)
+            assert answer == day_function(input_value)
             print(answer, 'Test Passed')
         except Exception as e:
-            print(input_value, answer, day9(input_value, ))
+            print(input_value, answer, day_function(input_value, ))
             raise e
-    with open('input/day9.txt') as f:
-        input_values = f.read()
-    print(day9(input_values))
+    try:
+        with open(f'input/day{day}.txt') as f:
+            input_values = f.read()
+    except FileNotFoundError:
+        print(f"https://adventofcode.com/2020/day/{day}/input")
+    print(day_function(input_values))
