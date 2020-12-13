@@ -459,11 +459,26 @@ def day13(input_values: str) -> tuple:
     part_1 = min(((bus - timestamp % bus), bus) for bus in part_1_busses)
     bus = part_1[1]
     part_1 = bus * (bus - timestamp % bus)
+    busses = [x for x in input_values.splitlines()[1].split(',')]
+    busses = sorted([(int(bus), i) for i, bus in enumerate(busses) if bus != 'x'],
+                    reverse=True,
+                    )
+    if (7, 0) in busses:
+        big_bus, big_int = busses.pop(0)
+        part_2 = 0 - big_int
+    else:
+        big_bus, big_int = 641 * 13 * 17 * 29 * 37, 13
+        part_2 = - 13
+    while True:
+        part_2 += big_bus
+        if all((part_2 + i) % bus == 0 for bus, i in busses):
+            break
+
     return part_1, part_2
 
 
 test_values[13] = {"""939
-7,13,x,x,59,x,31,19""": (295, anything),
+7,13,x,x,59,x,31,19""": (295, 1068781),
                    }
 
 
