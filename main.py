@@ -350,6 +350,123 @@ test_values[10] = {"""16
                    }
 
 
+def day11(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    part_2 = None
+    grid = {(x, y): val for (y, row) in enumerate(input_values.splitlines()) for (x, val) in enumerate(row)}
+    new_grid = {}
+    indices = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+    while new_grid != grid:
+        if new_grid:
+            grid = new_grid.copy()
+        for (x, y), val in grid.items():
+            if val in 'L#':
+                neighbours = sum([grid.get((x + i, y + j), '.') == '#' for i, j in indices])
+            if val == 'L' and neighbours == 0:
+                new_grid[(x, y)] = '#'
+            elif val == '#' and neighbours >= 4:
+                new_grid[(x, y)] = 'L'
+            else:
+                new_grid[(x, y)] = val
+
+    part_1 = list(new_grid.values()).count('#')
+    return part_1, part_2
+
+
+test_values[11] = {"""L.LL.LL.LL
+LLLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLLL
+L.LLLLLL.L
+L.LLLLL.LL""": (37, anything),
+                   }
+
+
+def day12(input_values: str) -> tuple:
+    """We are sailing"""
+    part_2 = None
+    instructions = ((x[0], int(x[1:])) for x in input_values.splitlines())
+    current_direction = 90  # East
+    easting, northing = 0, 0
+    for move, distance in instructions:
+        if move == 'L':
+            current_direction -= distance
+        elif move == 'R':
+            current_direction += distance
+        current_direction %= 360
+        if move == 'F':
+            move = {0: 'N', 90: 'E', 180: 'S', 270: 'W'}[current_direction]
+        if move == 'N':
+            northing += distance
+        if move == 'S':
+            northing -= distance
+        if move == 'E':
+            easting += distance
+        if move == 'W':
+            easting -= distance
+    part_1 = abs(easting) + abs(northing)
+
+    instructions = ((x[0], int(x[1:])) for x in input_values.splitlines())
+    waypoint_easting = 10
+    waypoint_northing = 1
+    easting, northing = 0, 0
+    for move, distance in instructions:
+        if move in 'LR' and distance == 180:
+            waypoint_easting, waypoint_northing = -waypoint_easting, -waypoint_northing
+        elif (move, distance) in (('L', 90), ('R', 270)):
+            waypoint_easting, waypoint_northing = -waypoint_northing, waypoint_easting
+        elif (move, distance) in (('R', 90), ('L', 270)):
+            waypoint_easting, waypoint_northing = waypoint_northing, -waypoint_easting
+        if move == 'F':
+            easting += distance * waypoint_easting
+            northing += distance * waypoint_northing
+        if move == 'N':
+            waypoint_northing += distance
+        if move == 'S':
+            waypoint_northing -= distance
+        if move == 'E':
+            waypoint_easting += distance
+        if move == 'W':
+            waypoint_easting -= distance
+
+    part_2 = abs(easting) + abs(northing)
+
+    return part_1, part_2
+
+
+test_values[12] = {"""F10
+N3
+F7
+R90
+F11""": (25, 286),
+                   }
+
+
+def day13(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    part_2 = None
+    timestamp, busses = input_values.splitlines()
+    timestamp = int(timestamp)
+    busses = set(busses.split(','))
+    busses.remove('x')
+    part_1_busses = map(int, busses)
+    part_1 = min(((bus - timestamp % bus), bus) for bus in part_1_busses)
+    bus = part_1[1]
+    part_1 = bus * (bus - timestamp % bus)
+    return part_1, part_2
+
+
+test_values[13] = {"""939
+7,13,x,x,59,x,31,19""": (295, anything),
+                   }
+
+
 def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
@@ -359,14 +476,14 @@ def day(input_values: str) -> tuple:
     return part_1, part_2
 
 
-test_values[0] = {"""
-""": (anything, anything),
+test_values[0] = {"""""": (anything, anything),
                   }
 
 if __name__ == '__main__':
     today = date.today()
     day = today.day
-    day_function = day10
+    #    day = 11
+    day_function = day13
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
