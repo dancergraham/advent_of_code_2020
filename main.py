@@ -355,6 +355,7 @@ def day11(input_values: str) -> tuple:
     part_1 = None
     part_2 = None
     grid = {(x, y): val for (y, row) in enumerate(input_values.splitlines()) for (x, val) in enumerate(row)}
+    grid_2 = grid.copy()
     new_grid = {}
     indices = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
     while new_grid != grid:
@@ -371,6 +372,30 @@ def day11(input_values: str) -> tuple:
                 new_grid[(x, y)] = val
 
     part_1 = list(new_grid.values()).count('#')
+
+    def seen(pt, direction, grid):
+        x, y = pt
+        i, j = direction
+        if (obj := grid.get((x + i, y + j), 'L')) in '#L':  # Treat surrounding squares as empty seats
+            return obj
+        else:
+            return seen((x + i, y + j), (i, j), grid)
+
+    new_grid_2 = {}
+    while new_grid_2 != grid_2:
+        if new_grid_2:
+            grid_2 = new_grid_2.copy()
+        for (x, y), val in grid_2.items():
+            if val in 'L#':
+                visible = sum([seen((x, y), (i, j), grid_2) == '#' for i, j in indices])
+            if val == 'L' and visible == 0:
+                new_grid_2[(x, y)] = '#'
+            elif val == '#' and visible >= 5:
+                new_grid_2[(x, y)] = 'L'
+            else:
+                new_grid_2[(x, y)] = val
+
+    part_2 = list(new_grid_2.values()).count('#')
     return part_1, part_2
 
 
@@ -383,7 +408,7 @@ L.LLLLL.LL
 ..L.L.....
 LLLLLLLLLL
 L.LLLLLL.L
-L.LLLLL.LL""": (37, anything),
+L.LLLLL.LL""": (37, 26),
                    }
 
 
@@ -497,8 +522,8 @@ test_values[0] = {"""""": (anything, anything),
 if __name__ == '__main__':
     today = date.today()
     day = today.day
-    #    day = 11
-    day_function = day13
+    day = 11
+    day_function = day11
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
