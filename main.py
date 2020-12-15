@@ -114,7 +114,6 @@ def day5(input_values: list) -> tuple:
     calculate answer
     """
     part_1 = 0
-    part_2 = None
     lr_list = sorted(bin(x)[2:].zfill(3) for x in range(8))
     lr_trans = str.maketrans('01', 'LR')
     lr_dict = {s.translate(lr_trans): i for i, s in enumerate(lr_list)}
@@ -281,7 +280,6 @@ acc +6
 def day9(input_values: str) -> tuple:
     """template"""
     part_1 = None
-    part_2 = None
     numbers = [int(line) for line in input_values.splitlines()]
     if len(input_values) < 1000:
         preamble = 5  # test data
@@ -566,21 +564,34 @@ mem[8] = 0
 
 
 def day15(input_values: str) -> tuple:
-    """template"""
-    part_1 = None
-    part_2 = None
-    ...
+    """Off by one error generator"""
+    numbers = [int(x) for x in input_values.split(',')]
+    seen = {n: i for i, n in enumerate(numbers[:-1], 1)}
+    turn = len(numbers)
+    n = numbers[-1]
+    while turn < 2020:
+        say = turn - seen.get(n, turn)
+        seen[n] = turn
+        n = say
+        turn += 1
+    part_1 = n
+    while turn < 30000000:
+        say = turn - seen.get(n, turn)
+        seen[n] = turn
+        n = say
+        turn += 1
 
+    part_2 = n
     return part_1, part_2
 
 
-test_values[15] = {"""0,3,6""": (436, anything),
-                   "1,3,2": (1, anything),
-                   "2,1,3": (10, anything),
-                   "1,2,3": (27, anything),
-                   "2,3,1": (78, anything),
-                   "3,2,1": (438, anything),
-                   "3,1,2": (1836, anything),
+test_values[15] = {"""0,3,6""": (436, 175594),
+                   "1,3,2": (1, 2578),
+                   "2,1,3": (10, 3544142),
+                   "1,2,3": (27, 261214),
+                   "2,3,1": (78, 6895259),
+                   "3,2,1": (438, 18),
+                   "3,1,2": (1836, 362),
                    }
 
 
@@ -599,7 +610,7 @@ test_values[0] = {"""""": (anything, anything),
 if __name__ == '__main__':
     today = date.today()
     day = today.day
-    day_function = day14
+    day_function = day15
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
