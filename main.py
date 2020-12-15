@@ -1,3 +1,4 @@
+import re
 from collections import deque
 from copy import copy
 from datetime import date
@@ -507,6 +508,82 @@ test_values[13] = {"""939
                    }
 
 
+def day14(input_values: str) -> tuple:
+    """Bitmasks"""
+
+    def parse_chunks(data: str):
+        mask, values = "", []
+        for line in data.splitlines():
+            if line[:4] == 'mask':
+                if mask:
+                    yield mask, values
+                mask = line[7:]
+                values = []
+            else:
+                m = re.match(r"mem\[(\d+)\] = (\d+)", line)
+                address = int(m.group(1))
+                value = int(m.group(2))
+                values.append((address, value))
+        yield mask, values
+
+    register = dict()
+    for bitmask, values in parse_chunks(input_values):
+        for address, value in values:
+            binary_value = bin(value)[2:].zfill(36)
+            output = []
+            for mi, vi in zip(bitmask[::-1], binary_value[::-1]):
+                if mi in '01':
+                    output.append(mi)
+                else:
+                    output.append(vi)
+            register[address] = int("".join(output[::-1]), 2)
+    part_1 = sum(register.values())
+
+    register = dict()
+    for bitmask, values in parse_chunks(input_values):
+        floating_bits = bitmask.count('x')
+
+        for address, value in values:
+            binary_value = bin(value)[2:].zfill(36)
+            output = []
+            for mi, vi in zip(bitmask[::-1], binary_value[::-1]):
+                if mi in '01':
+                    output.append(mi)
+                else:
+                    output.append(vi)
+            register[address] = int("".join(output[::-1]), 2)
+    part_2 = sum(register.values())
+
+    return part_1, part_2
+
+
+test_values[14] = {"""mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
+mem[8] = 11
+mem[7] = 101
+mem[8] = 0
+""": (165, anything),
+                   }
+
+
+def day15(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    part_2 = None
+    ...
+
+    return part_1, part_2
+
+
+test_values[15] = {"""0,3,6""": (436, anything),
+                   "1,3,2": (1, anything),
+                   "2,1,3": (10, anything),
+                   "1,2,3": (27, anything),
+                   "2,3,1": (78, anything),
+                   "3,2,1": (438, anything),
+                   "3,1,2": (1836, anything),
+                   }
+
+
 def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
@@ -522,8 +599,7 @@ test_values[0] = {"""""": (anything, anything),
 if __name__ == '__main__':
     today = date.today()
     day = today.day
-    day = 11
-    day_function = day11
+    day_function = day14
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
