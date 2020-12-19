@@ -9,3 +9,5 @@ Solutions using Python 3.8+ , aiming for:
 - Learning something new
 
 My first use of the walrus operator `:=`, deque, and first use of generators to process chunks of data (on day 14).
+
+![](images/4.png)
