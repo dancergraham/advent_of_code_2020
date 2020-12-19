@@ -1,7 +1,8 @@
 import re
-from collections import deque
+from collections import deque, defaultdict
 from copy import copy
 from datetime import date
+from itertools import permutations
 
 
 class Anything():
@@ -595,6 +596,92 @@ test_values[15] = {"""0,3,6""": (436, 175594),
                    }
 
 
+def day16(input_values: str) -> tuple:
+    """template"""
+    part_2 = None
+    rules, my_numbers, other_numbers = [section.splitlines() for section in input_values.split('\n\n')]
+    rule = defaultdict(set)
+    part_1_valid = set()
+    for r in rules:
+        name, a, b, c, d = re.findall(r'(.+): (\d+)-(\d+) or (\d+)-(\d+)', r)[0]
+        a, b, c, d = int(a), int(b), int(c), int(d)
+        for i in range(a, b + 1):
+            rule[name].add(i)
+            part_1_valid.add(i)
+        for i in range(c, d + 1):
+            rule[name].add(i)
+            part_1_valid.add(i)
+    part_1 = sum(int(i) for ticket in other_numbers[1:] for i in ticket.split(',') if int(i) not in part_1_valid)
+
+    return part_1, part_2
+
+
+test_values[16] = {"""class: 1-3 or 5-7
+row: 6-11 or 33-44
+seat: 13-40 or 45-50
+
+your ticket:
+7,1,14
+
+nearby tickets:
+7,3,47
+40,4,50
+55,2,20
+38,6,12
+""": (71, anything),
+                   }
+
+
+def day17(input_values: str) -> tuple:
+    """Conway Cubes.  based on a solution for Rhino 3D"""
+    part_1 = conway(input_values, dimensions=3)
+
+    part_2 = conway(input_values, dimensions=4)
+
+    return part_1, part_2
+
+
+def conway(input_values, dimensions):
+    new_cubes = set()
+    # Build the starting grid
+    for y, row in enumerate(input_values.splitlines()):
+        for x, cell in enumerate(row):
+            if cell == '#':
+                new_cubes.add((x, y) + (0,) * (dimensions - 2))
+    # Initialise sets and lists
+    old_spheres = []
+    neighbouring = set(permutations([1, 0, -1] * dimensions, dimensions))
+    neighbouring.remove((0,) * dimensions)  # a cube is not its own neighbour
+    for round in range(6 + 1):
+        cubes = new_cubes.copy()
+        neighbours = defaultdict(int)
+        old_spheres = set()
+        answer = 0
+
+        # Draw cubes and identify neighbours
+        for cube in cubes:
+            answer += 1
+            for n in neighbouring:
+                neighbours[tuple(cube[i] + n[i] for i in range(dimensions)
+                                 )] += 1
+        new_cubes = set()
+
+        # Apply rules for creation of cubes in next round
+        for location, n in neighbours.items():
+            if location in cubes:
+                if 2 <= n <= 3:
+                    new_cubes.add(location)
+            elif n == 3:
+                new_cubes.add(location)
+    return answer
+
+
+test_values[17] = {""".#.
+..#
+###""": (112, 848),
+                   }
+
+
 def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
@@ -610,7 +697,8 @@ test_values[0] = {"""""": (anything, anything),
 if __name__ == '__main__':
     today = date.today()
     day = today.day
-    day_function = day15
+    day = 17
+    day_function = day17
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
