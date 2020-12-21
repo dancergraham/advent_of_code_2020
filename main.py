@@ -1,5 +1,5 @@
 import re
-from collections import deque, defaultdict
+from collections import deque, defaultdict, Counter
 from copy import copy
 from datetime import date
 from itertools import permutations
@@ -538,18 +538,25 @@ def day14(input_values: str) -> tuple:
             register[address] = int("".join(output[::-1]), 2)
     part_1 = sum(register.values())
 
+    def append_all(l, i):
+        for sublist in l:
+            sublist.append(i)
+
     register = dict()
     for bitmask, values in parse_chunks(input_values):
-        floating_bits = bitmask.count('x')
-
         for address, value in values:
             binary_value = bin(value)[2:].zfill(36)
-            output = []
+            output = [[]]
             for mi, vi in zip(bitmask[::-1], binary_value[::-1]):
-                if mi in '01':
-                    output.append(mi)
+                if mi == '0':
+                    append_all(output, vi)
+                if mi == '1':
+                    append_all(output, mi)
                 else:
-                    output.append(vi)
+                    extra_output = output.copy()
+                    append_all(output, '0')
+                    append_all(extra_output, '1')
+                    output.extend(extra_output)
             register[address] = int("".join(output[::-1]), 2)
     part_2 = sum(register.values())
 
@@ -561,6 +568,10 @@ mem[8] = 11
 mem[7] = 101
 mem[8] = 0
 """: (165, anything),
+                   """mask = 000000000000000000000000000000X1001X
+mem[42] = 100
+mask = 00000000000000000000000000000000X0XX
+mem[26] = 1""": (anything, 208)
                    }
 
 
@@ -682,6 +693,49 @@ test_values[17] = {""".#.
                    }
 
 
+def day20(input_values: str) -> tuple:
+    """template"""
+    part_1 = 1
+    part_2 = None
+
+    tiles = {int(tile[5:9]): tile.splitlines()[1:] for tile in input_values.strip().split('\n\n')}
+    edges = {n: [tile[0], tile[-1], ''.join([l[0] for l in tile]), ''.join([l[-1] for l in tile])] for n, tile in
+             tiles.items()}
+    print(edges)
+    for n, edgelist in edges.items():
+        edges[n] = [min(edge, edge[::-1]) for edge in edgelist]
+    edge_counter = Counter(edge for edgelist in edges.values() for edge in edgelist)
+
+    print(edges)
+    print(edge_counter)
+    for n, edgelist in edges.items():
+        if len([edge for edge in edgelist if edge_counter[edge] == 1]) == 2:
+            part_1 *= n
+
+    return part_1, part_2
+
+
+test_values[20] = {"""Tile 2311:\n..##.#..#.\n##..#.....\n#...##..#.\n####.#...#\n##.##.###.\n##...#.###\n.#.#.#..##\n..#....#..\n###...#.#.\n..###..###
+
+Tile 1951:\n#.##...##.\n#.####...#\n.....#..##\n#...######\n.##.#....#\n.###.#####\n###.##.##.\n.###....#.\n..#.#..#.#\n#...##.#..
+
+Tile 1171:\n####...##.\n#..##.#..#\n##.#..#.#.\n.###.####.\n..###.####\n.##....##.\n.#...####.\n#.##.####.\n####..#...\n.....##...
+
+Tile 1427:\n###.##.#..\n.#..#.##..\n.#.##.#..#\n#.#.#.##.#\n....#...##\n...##..##.\n...#.#####\n.#.####.#.\n..#..###.#\n..##.#..#.
+
+Tile 1489:\n##.#.#....\n..##...#..\n.##..##...\n..#...#...\n#####...#.\n#..#.#.#.#\n...#.#.#..\n##.#...##.\n..##.##.##\n###.##.#..
+
+Tile 2473:\n#....####.\n#..#.##...\n#.##..#...\n######.#.#\n.#...#.#.#\n.#########\n.###.#..#.\n########.#\n##...##.#.\n..###.#.#.
+
+Tile 2971:\n..#.#....#\n#...###...\n#.#.###...\n##.##..#..\n.#####..##\n.#..####.#\n#..#.#..#.\n..####.###\n..#.#.###.\n...#.#.#.#
+
+Tile 2729:\n...#.#.#.#\n####.#....\n..#.#.....\n....#..#.#\n.##..##.#.\n.#.####...\n####.#.#..\n##.####...\n##..#.##..\n#.##...##.
+
+Tile 3079:\n#.#.#####.\n.#..######\n..#.......\n######....\n####.#..#.\n.#...#.##.\n#.#####.##\n..#.###...\n..#.......\n..#.###...""": (
+    20899048083289, anything),
+}
+
+
 def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
@@ -696,9 +750,9 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
+    day = 14
     day = today.day
-    day = 17
-    day_function = day17
+    day_function = day21
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
