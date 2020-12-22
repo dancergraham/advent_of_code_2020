@@ -736,6 +736,71 @@ Tile 3079:\n#.#.#####.\n.#..######\n..#.......\n######....\n####.#..#.\n.#...#.#
 }
 
 
+def day21(input_values: str) -> tuple:
+    """template"""
+    part_1 = 0
+    part_2 = None
+    allergen_containers = defaultdict(set)
+    all_foods = Counter()
+    all_allergens = set()
+    for line in input_values.splitlines():
+        foods, allergens = line.split(' (')
+        foods = foods.split()
+        all_foods.update(foods)
+        for food in foods:
+            for allergen in allergens:
+                allergen_containers[allergen]
+        allergens = allergens.replace(',', '')[:-1].split()[1:]
+        all_allergens.update(allergens)
+    print(all_foods, all_allergens)
+
+    return part_1, part_2
+
+
+test_values[21] = {"""mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
+trh fvjkl sbzzf mxmxvkd (contains dairy)
+sqjhc fvjkl (contains soy)
+sqjhc mxmxvkd sbzzf (contains fish)""": (5, anything),
+                   }
+
+
+def day22(input_values: str) -> tuple:
+    """template"""
+    player_1, player_2 = [deque([int(x) for x in player.splitlines()[1:]]) for player in input_values.split('\n\n')]
+    while player_1 and player_2:
+        card1, card2 = player_1.popleft(), player_2.popleft()
+        if card1 > card2:
+            player_1.append(card1)
+            player_1.append(card2)
+        elif card2 > card1:
+            player_2.append(card2)
+            player_2.append(card1)
+    winner = max(player_1, player_2)
+    score = sum([card * i for i, card in enumerate(reversed(winner), 1)])
+    part_1 = score
+    part_2 = None
+    ...
+
+    return part_1, part_2
+
+
+test_values[22] = {"""Player 1:
+9
+2
+6
+3
+1
+
+Player 2:
+5
+8
+4
+7
+10
+""": (306, anything),
+                   }
+
+
 def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
@@ -750,9 +815,9 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    day = 14
+    #    day = 14
     day = today.day
-    day_function = day21
+    day_function = day22
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
