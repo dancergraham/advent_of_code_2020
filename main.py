@@ -767,17 +767,22 @@ sqjhc mxmxvkd sbzzf (contains fish)""": (5, anything),
 def day22(input_values: str) -> tuple:
     """template"""
     player_1, player_2 = [deque([int(x) for x in player.splitlines()[1:]]) for player in input_values.split('\n\n')]
+    player = {1: player_1,
+              2: player_2}
     while player_1 and player_2:
-        card1, card2 = player_1.popleft(), player_2.popleft()
+        card1, card2 = player[1].popleft(), player[2].popleft()
         if card1 > card2:
-            player_1.append(card1)
-            player_1.append(card2)
+            player[1].append(card1)
+            player[1].append(card2)
         elif card2 > card1:
-            player_2.append(card2)
-            player_2.append(card1)
-    winner = max(player_1, player_2)
+            player[2].append(card2)
+            player[2].append(card1)
+    winner = max(player[1], player[2])
     score = sum([card * i for i, card in enumerate(reversed(winner), 1)])
     part_1 = score
+
+    seen = set()
+
     part_2 = None
     ...
 
@@ -815,8 +820,8 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    #    day = 14
     day = today.day
+    day = 22
     day_function = day22
     if today.month == 12:
         print('Merry Christmas')
