@@ -831,7 +831,24 @@ def day24(input_values: str) -> tuple:
     part_1 = len(black)
 
     part_2 = None
-    ...
+    for day in range(100):
+        day_flips = set()
+        for tile, visits in visited.items():
+            is_black = visits %2
+            black_neighbours = 0
+            for neighbour in directions.values():
+                if (visited.get(tile+neighbour,0) %2):
+                    black_neighbours += 1
+            if is_black and black_neighbours not in (0,1):
+                day_flips.add(tile)
+            elif not is_black and black_neighbours == 1:
+                day_flips.add(tile)
+        visited.update(day_flips)
+        black = [k for k, v in visited.items() if v % 2]
+        print(day, len(black))
+
+    part_2 = len(black)
+
 
     return part_1, part_2
 
