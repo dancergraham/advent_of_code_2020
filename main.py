@@ -807,8 +807,7 @@ Player 2:
 
 
 def day24(input_values: str) -> tuple:
-    """template"""
-    part_1 = None
+    """Flipping tiles - a bit complex"""
     lines = input_values.splitlines()
     directions = {'e': complex(1, 0),
                   'se': complex(0.5, -0.5),
@@ -830,22 +829,27 @@ def day24(input_values: str) -> tuple:
     black = [k for k, v in visited.items() if v % 2]
     part_1 = len(black)
 
-    part_2 = None
     for day in range(100):
         day_flips = set()
+        neighbouring_tiles=set()
+        for tile in visited.keys():
+            for neighbour in directions.values():
+                if (tile+neighbour) not in visited:
+                    new = tile + neighbour
+                    neighbouring_tiles.add(new)
+        [visited.setdefault(key, 0) for key in neighbouring_tiles]
         for tile, visits in visited.items():
-            is_black = visits %2
+            is_black = (visits %2)
             black_neighbours = 0
             for neighbour in directions.values():
                 if (visited.get(tile+neighbour,0) %2):
                     black_neighbours += 1
-            if is_black and black_neighbours not in (0,1):
+            if is_black and black_neighbours not in (1,2):
                 day_flips.add(tile)
-            elif not is_black and black_neighbours == 1:
+            elif not is_black and black_neighbours == 2:
                 day_flips.add(tile)
         visited.update(day_flips)
         black = [k for k, v in visited.items() if v % 2]
-        print(day, len(black))
 
     part_2 = len(black)
 
