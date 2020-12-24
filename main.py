@@ -806,6 +806,60 @@ Player 2:
                    }
 
 
+def day24(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    lines = input_values.splitlines()
+    directions = {'e': complex(1, 0),
+                  'se': complex(0.5, -0.5),
+                  'sw': complex(-0.5, -0.5),
+                  'w': complex(-1, 0),
+                  'nw': complex(-0.5, 0.5),
+                  'ne': complex(0.5, 0.5),
+                  }
+    visited = Counter()
+    for line in lines:
+        line = list(reversed(line))
+        position = complex(0, 0)
+        while line:
+            move = line.pop()
+            if move not in directions:
+                move += line.pop()
+            position += directions[move]
+        visited.update([position, ])
+    black = [k for k, v in visited.items() if v % 2]
+    part_1 = len(black)
+
+    part_2 = None
+    ...
+
+    return part_1, part_2
+
+
+test_values[24] = {"""sesenwnenenewseeswwswswwnenewsewsw
+neeenesenwnwwswnenewnwwsewnenwseswesw
+seswneswswsenwwnwse
+nwnwneseeswswnenewneswwnewseswneseene
+swweswneswnenwsewnwneneseenw
+eesenwseswswnenwswnwnwsewwnwsene
+sewnenenenesenwsewnenwwwse
+wenwwweseeeweswwwnwwe
+wsweesenenewnwwnwsenewsenwwsesesenwne
+neeswseenwwswnwswswnw
+nenwswwsewswnenenewsenwsenwnesesenew
+enewnwewneswsewnwswenweswnenwsenwsw
+sweneswneswneneenwnewenewwneswswnese
+swwesenesewenwneswnwwneseswwne
+enesenwswwswneneswsenwnewswseenwsese
+wnwnesenesenenwwnenwsewesewsesesew
+nenewswnwewswnenesenwnesewesw
+eneswnwswnwsenenwnwnwwseeswneewsenese
+neswnwewnwnwseenwseesewsenwsweewe
+wseweeenwnesenwwwswnew
+""": (10, 2208),
+                   }
+
+
 def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
@@ -820,9 +874,9 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    day = today.day
     day = 22
-    day_function = day22
+    day = today.day
+    day_function = day24
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
