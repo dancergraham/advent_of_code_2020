@@ -881,6 +881,43 @@ wseweeenwnesenwwwswnew
                    }
 
 
+def day25(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    card_key, door_key = [int(x) for x in input_values.splitlines()]
+    subject_number = 7
+
+    card_public_key = 1
+    card_loop = 0
+    while card_public_key!=card_key:
+        card_public_key *= subject_number
+        card_public_key %= 20201227
+        card_loop += 1
+
+    door_public_key = 1
+    door_loop = 0
+
+    while door_public_key!=door_key:
+        door_public_key *= subject_number
+        door_public_key %= 20201227
+        door_loop += 1
+
+    encryption_key = 1
+    for _ in range(door_loop):
+        encryption_key *= card_public_key
+        encryption_key %= 20201227
+
+    part_1 = encryption_key
+    part_2 = None
+    ...
+
+    return part_1, part_2
+
+
+test_values[25] = {"""5764801
+17807724""": (14897079, anything),
+                  }
+
 def day(input_values: str) -> tuple:
     """template"""
     part_1 = None
@@ -895,9 +932,8 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    day = 22
-    day = today.day
-    day_function = day24
+    day = 25
+    day_function = day25
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
