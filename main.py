@@ -810,7 +810,7 @@ def day23(input_values: str) -> tuple:
     """template"""
     part_1 = None
     circle = deque(map(int,input_values))
-    for _ in range(10):
+    for move in range(1, 101):
         current = circle[0]
 
         circle.rotate(-1)
@@ -818,19 +818,22 @@ def day23(input_values: str) -> tuple:
         destination = current -1
         while destination not in circle:
             destination -=1
-            if destination <= min(circle):
+            if destination < min(circle):
                 destination = max(circle)
         print(f"""
--- move {_} --
+-- move {move} --
 cups:  {circle} 
 current: {current}
 pick up: {pick_up}
 destination: {destination}
 """)
-        circle.rotate(circle.index(destination)-1)
-        circle.extendleft(pick_up[::-1])
-        circle.rotate(-(circle.index(current)+1))
 
+        circle.rotate(-circle.index(destination)-1)
+        circle.extendleft(pick_up[::-1])
+        circle.rotate(-(circle.index(current))-1)
+    circle.rotate(-circle.index(1))
+    circle.popleft()
+    part_1 = int("".join(map(str,circle)))
     part_2 = None
     ...
 
