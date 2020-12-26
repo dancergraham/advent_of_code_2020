@@ -806,6 +806,41 @@ Player 2:
                    }
 
 
+def day23(input_values: str) -> tuple:
+    """template"""
+    part_1 = None
+    circle = deque(map(int,input_values))
+    for _ in range(10):
+        current = circle[0]
+
+        circle.rotate(-1)
+        pick_up = [circle.popleft() for _ in range(1,4)]
+        destination = current -1
+        while destination not in circle:
+            destination -=1
+            if destination <= min(circle):
+                destination = max(circle)
+        print(f"""
+-- move {_} --
+cups:  {circle} 
+current: {current}
+pick up: {pick_up}
+destination: {destination}
+""")
+        circle.rotate(circle.index(destination)-1)
+        circle.extendleft(pick_up[::-1])
+        circle.rotate(-(circle.index(current)+1))
+
+    part_2 = None
+    ...
+
+    return part_1, part_2
+
+
+test_values[23] = {"""389125467""": (67384529, anything),
+                  }
+
+
 def day24(input_values: str) -> tuple:
     """Flipping tiles - a bit complex"""
     lines = input_values.splitlines()
@@ -883,7 +918,6 @@ wseweeenwnesenwwwswnew
 
 def day25(input_values: str) -> tuple:
     """template"""
-    part_1 = None
     card_key, door_key = [int(x) for x in input_values.splitlines()]
     subject_number = 7
 
@@ -932,8 +966,8 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    day = 25
-    day_function = day25
+    day = 23
+    day_function = day23
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
