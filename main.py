@@ -608,11 +608,12 @@ test_values[15] = {"""0,3,6""": (436, 175594),
 
 
 def day16(input_values: str) -> tuple:
-    """template"""
+    """Follow the rules"""
     part_2 = None
     rules, my_numbers, other_numbers = [section.splitlines() for section in input_values.split('\n\n')]
     rule = defaultdict(set)
     part_1_valid = set()
+
     for r in rules:
         name, a, b, c, d = re.findall(r'(.+): (\d+)-(\d+) or (\d+)-(\d+)', r)[0]
         a, b, c, d = int(a), int(b), int(c), int(d)
@@ -623,7 +624,33 @@ def day16(input_values: str) -> tuple:
             rule[name].add(i)
             part_1_valid.add(i)
     part_1 = sum(int(i) for ticket in other_numbers[1:] for i in ticket.split(',') if int(i) not in part_1_valid)
+    valid_tickets = [x for x in other_numbers[1:] if all(int(num) in part_1_valid for num in x.split(','))]
+    field_numbers = [set() for _ in valid_tickets[0].split(',')]
+    # Get all ticket numbers in each field position
+    for ticket in valid_tickets:
+        [nums.add(int(num)) for nums, num in zip(field_numbers,ticket.split(','))]
 
+    # Determine which field names are possible for each position
+    possible_names = [set(rule.keys()) for _ in range(len(field_numbers))]
+    for i, field in enumerate(field_numbers):
+        for field_name, valid_values in rule.items():
+            if field.difference(valid_values):
+                possible_names[i].discard(field_name)
+
+    while any(len(x) >1 for x in possible_names):
+        for subset in possible_names:
+            if len(subset) == 1:
+                field_name = subset.pop()
+                [x.discard(field_name) for x in possible_names]
+                subset.add(field_name)
+
+    part_2 = 1
+    my_numbers = [int(x) for x in my_numbers[1].split(',')]
+    for num, field_name in zip(my_numbers, possible_names):
+        if 'departure' in field_name.pop():
+            print (num, field_name)
+            part_2 *= num
+    print (possible_names)
     return part_1, part_2
 
 
@@ -808,18 +835,18 @@ Player 2:
 
 def day23(input_values: str) -> tuple:
     """template"""
-    part_1 = None
+
     circle = deque(map(int,input_values))
     for move in range(1, 101):
         current = circle[0]
 
         circle.rotate(-1)
         pick_up = [circle.popleft() for _ in range(1,4)]
-        destination = current -1
-        while destination not in circle:
+        destination = (current -1) % 10
+        while (destination in pick_up) or destination <=0:
             destination -=1
-            if destination < min(circle):
-                destination = max(circle)
+            if destination <= 0:
+                destination = 9
         print(f"""
 -- move {move} --
 cups:  {circle} 
@@ -834,13 +861,34 @@ destination: {destination}
     circle.rotate(-circle.index(1))
     circle.popleft()
     part_1 = int("".join(map(str,circle)))
-    part_2 = None
+
+    circle = deque(map(int,input_values))
+    circle.extend(range(10,1_000_001))
+    circle_copy = list(circle)
+    for move in range(1, 10_000_001):
+        current = circle[0]
+
+        circle.rotate(-1)
+        pick_up = [circle.popleft() for _ in range(1,4)]
+        destination = (current -1) % 1_000_000
+        while (destination in pick_up) or destination <=0:
+            destination -=1
+            if destination <= 0:
+                destination = 1_000_000
+
+        circle.rotate(-circle.index(destination)-1)
+        circle.extendleft(pick_up[::-1])
+        circle.rotate(-(circle.index(current))-1)
+    circle.rotate(-circle.index(1))
+    circle.popleft()
+
+    part_2 = circle.popleft()*circle.popleft()
     ...
 
     return part_1, part_2
 
 
-test_values[23] = {"""389125467""": (67384529, anything),
+test_values[23] = {"""389125467""": (67384529, 149245887792),
                   }
 
 
@@ -969,8 +1017,8 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    day = 23
-    day_function = day23
+    day = 16
+    day_function = eval(f'day{day}')
     if today.month == 12:
         print('Merry Christmas')
     print(f'https://adventofcode.com/2020/day/{day}')
