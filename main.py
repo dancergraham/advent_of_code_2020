@@ -609,7 +609,6 @@ test_values[15] = {"""0,3,6""": (436, 175594),
 
 def day16(input_values: str) -> tuple:
     """Follow the rules"""
-    part_2 = None
     rules, my_numbers, other_numbers = [section.splitlines() for section in input_values.split('\n\n')]
     rule = defaultdict(set)
     part_1_valid = set()
@@ -648,9 +647,7 @@ def day16(input_values: str) -> tuple:
     my_numbers = [int(x) for x in my_numbers[1].split(',')]
     for num, field_name in zip(my_numbers, possible_names):
         if 'departure' in field_name.pop():
-            print (num, field_name)
             part_2 *= num
-    print (possible_names)
     return part_1, part_2
 
 
