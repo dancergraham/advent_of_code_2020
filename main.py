@@ -717,6 +717,21 @@ test_values[17] = {""".#.
                    }
 
 
+def day18(input_values: str) -> tuple:
+    """template"""
+    for line in input_values.splitlines():
+
+    part_1 = None
+    part_2 = None
+    ...
+
+    return part_1, part_2
+
+
+test_values[18] = {"""1 + 2 * 3 + 4 * 5 + 6""": (71, anything),
+                   }
+
+
 def day20(input_values: str) -> tuple:
     """template"""
     part_1 = 1
@@ -1014,7 +1029,7 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    day = 16
+    day = 18
     day_function = eval(f'day{day}')
     if today.month == 12:
         print('Merry Christmas')
