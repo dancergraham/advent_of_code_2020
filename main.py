@@ -627,7 +627,7 @@ def day16(input_values: str) -> tuple:
     field_numbers = [set() for _ in valid_tickets[0].split(',')]
     # Get all ticket numbers in each field position
     for ticket in valid_tickets:
-        [nums.add(int(num)) for nums, num in zip(field_numbers,ticket.split(','))]
+        [nums.add(int(num)) for nums, num in zip(field_numbers, ticket.split(','))]
 
     # Determine which field names are possible for each position
     possible_names = [set(rule.keys()) for _ in range(len(field_numbers))]
@@ -636,7 +636,7 @@ def day16(input_values: str) -> tuple:
             if field.difference(valid_values):
                 possible_names[i].discard(field_name)
 
-    while any(len(x) >1 for x in possible_names):
+    while any(len(x) > 1 for x in possible_names):
         for subset in possible_names:
             if len(subset) == 1:
                 field_name = subset.pop()
@@ -719,9 +719,23 @@ test_values[17] = {""".#.
 
 def day18(input_values: str) -> tuple:
     """template"""
+    part_1 = 0
     for line in input_values.splitlines():
-
-    part_1 = None
+        parser = []
+        parentheses = [0]
+        for c in line[::-1]:
+            if c.isdigit():
+                parser.append(')')
+                parentheses[-1] += 1
+            elif c == '(':
+                parser.append('(' * parentheses.pop())
+            elif c == ')':
+                parentheses.append(0)
+            parser.append(c)
+        parser.append('(' * parentheses.pop())
+        expression = "".join(parser[::-1])
+        print(line, expression)
+        part_1 += eval(expression)
     part_2 = None
     ...
 
@@ -729,6 +743,11 @@ def day18(input_values: str) -> tuple:
 
 
 test_values[18] = {"""1 + 2 * 3 + 4 * 5 + 6""": (71, anything),
+                   """2 * 3 + (4 * 5)""": (26, anything),
+                   """5 + (8 * 3 + 9 + 3 * 4 * 3)""": (437, anything),
+                   """5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))""": (12240, anything),
+                   """((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2""": (13632, anything),
+
                    }
 
 
@@ -804,11 +823,16 @@ sqjhc mxmxvkd sbzzf (contains fish)""": (5, anything),
 
 
 def day22(input_values: str) -> tuple:
-    """template"""
+    """Cards with crab"""
+
+    def simple_round(hand_1, hand_2):
+        pass
+
     player_1, player_2 = [deque([int(x) for x in player.splitlines()[1:]]) for player in input_values.split('\n\n')]
     player = {1: player_1,
               2: player_2}
-    while player_1 and player_2:
+    while player[1] and player[2]:
+        winner, loser = simple_round(player[1], player[2])
         card1, card2 = player[1].popleft(), player[2].popleft()
         if card1 > card2:
             player[1].append(card1)
@@ -848,15 +872,15 @@ Player 2:
 def day23(input_values: str) -> tuple:
     """template"""
 
-    circle = deque(map(int,input_values))
+    circle = deque(map(int, input_values))
     for move in range(1, 101):
         current = circle[0]
 
         circle.rotate(-1)
-        pick_up = [circle.popleft() for _ in range(1,4)]
-        destination = (current -1) % 10
-        while (destination in pick_up) or destination <=0:
-            destination -=1
+        pick_up = [circle.popleft() for _ in range(1, 4)]
+        destination = (current - 1) % 10
+        while (destination in pick_up) or destination <= 0:
+            destination -= 1
             if destination <= 0:
                 destination = 9
         print(f"""
@@ -867,41 +891,41 @@ pick up: {pick_up}
 destination: {destination}
 """)
 
-        circle.rotate(-circle.index(destination)-1)
+        circle.rotate(-circle.index(destination) - 1)
         circle.extendleft(pick_up[::-1])
-        circle.rotate(-(circle.index(current))-1)
+        circle.rotate(-(circle.index(current)) - 1)
     circle.rotate(-circle.index(1))
     circle.popleft()
-    part_1 = int("".join(map(str,circle)))
+    part_1 = int("".join(map(str, circle)))
 
-    circle = deque(map(int,input_values))
-    circle.extend(range(10,1_000_001))
+    circle = deque(map(int, input_values))
+    circle.extend(range(10, 1_000_001))
     circle_copy = list(circle)
     for move in range(1, 10_000_001):
         current = circle[0]
 
         circle.rotate(-1)
-        pick_up = [circle.popleft() for _ in range(1,4)]
-        destination = (current -1) % 1_000_000
-        while (destination in pick_up) or destination <=0:
-            destination -=1
+        pick_up = [circle.popleft() for _ in range(1, 4)]
+        destination = (current - 1) % 1_000_000
+        while (destination in pick_up) or destination <= 0:
+            destination -= 1
             if destination <= 0:
                 destination = 1_000_000
 
-        circle.rotate(-circle.index(destination)-1)
+        circle.rotate(-circle.index(destination) - 1)
         circle.extendleft(pick_up[::-1])
-        circle.rotate(-(circle.index(current))-1)
+        circle.rotate(-(circle.index(current)) - 1)
     circle.rotate(-circle.index(1))
     circle.popleft()
 
-    part_2 = circle.popleft()*circle.popleft()
+    part_2 = circle.popleft() * circle.popleft()
     ...
 
     return part_1, part_2
 
 
 test_values[23] = {"""389125467""": (67384529, 149245887792),
-                  }
+                   }
 
 
 def day24(input_values: str) -> tuple:
@@ -929,20 +953,20 @@ def day24(input_values: str) -> tuple:
 
     for day in range(100):
         day_flips = set()
-        neighbouring_tiles=set()
+        neighbouring_tiles = set()
         for tile in visited.keys():
             for neighbour in directions.values():
-                if (tile+neighbour) not in visited:
+                if (tile + neighbour) not in visited:
                     new = tile + neighbour
                     neighbouring_tiles.add(new)
         [visited.setdefault(key, 0) for key in neighbouring_tiles]
         for tile, visits in visited.items():
-            is_black = (visits %2)
+            is_black = (visits % 2)
             black_neighbours = 0
             for neighbour in directions.values():
-                if (visited.get(tile+neighbour,0) %2):
+                if (visited.get(tile + neighbour, 0) % 2):
                     black_neighbours += 1
-            if is_black and black_neighbours not in (1,2):
+            if is_black and black_neighbours not in (1, 2):
                 day_flips.add(tile)
             elif not is_black and black_neighbours == 2:
                 day_flips.add(tile)
@@ -950,7 +974,6 @@ def day24(input_values: str) -> tuple:
         black = [k for k, v in visited.items() if v % 2]
 
     part_2 = len(black)
-
 
     return part_1, part_2
 
@@ -986,7 +1009,7 @@ def day25(input_values: str) -> tuple:
 
     card_public_key = 1
     card_loop = 0
-    while card_public_key!=card_key:
+    while card_public_key != card_key:
         card_public_key *= subject_number
         card_public_key %= 20201227
         card_loop += 1
@@ -994,7 +1017,7 @@ def day25(input_values: str) -> tuple:
     door_public_key = 1
     door_loop = 0
 
-    while door_public_key!=door_key:
+    while door_public_key != door_key:
         door_public_key *= subject_number
         door_public_key %= 20201227
         door_loop += 1
@@ -1013,7 +1036,8 @@ def day25(input_values: str) -> tuple:
 
 test_values[25] = {"""5764801
 17807724""": (14897079, anything),
-                  }
+                   }
+
 
 def day(input_values: str) -> tuple:
     """template"""
