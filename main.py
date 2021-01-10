@@ -3,6 +3,7 @@ from collections import deque, defaultdict, Counter
 from copy import copy
 from datetime import date
 from itertools import permutations
+from operator import add, sub, mul, truediv
 
 
 class Anything():
@@ -718,28 +719,69 @@ test_values[17] = {""".#.
 
 
 def day18(input_values: str) -> tuple:
-    """template"""
+    """TODO : Work out why the brace parser does not work"""
     part_1 = 0
     for line in input_values.splitlines():
-        parser = []
-        parentheses = [0]
-        for c in line[::-1]:
-            if c.isdigit():
-                parser.append(')')
-                parentheses[-1] += 1
-            elif c == '(':
-                parser.append('(' * parentheses.pop())
-            elif c == ')':
-                parentheses.append(0)
-            parser.append(c)
-        parser.append('(' * parentheses.pop())
-        expression = "".join(parser[::-1])
-        print(line, expression)
-        part_1 += eval(expression)
+        result = eval_parser(line)
+        part_1 += result
     part_2 = None
     ...
 
     return part_1, part_2
+
+
+def eval_parser(formula):
+    p = iter(formula.replace(' ', ''))
+    new_val = None
+    past_val = None
+    operation = None
+    braces = 0
+    ops = {'+': add,
+           '-': sub,
+           '*': mul,
+           '/': truediv,
+           }
+    for c in p:
+        if c.isdigit():
+            new_val = int(c)
+        elif c in '+-*/':
+            operation = ops[c]
+        elif c == ('('):
+            braces += 1
+            sub_formula = [c, ]
+            while braces:
+                c = next(p)
+                if c == '(':
+                    braces += 1
+                elif c == ')':
+                    braces -= 1
+                sub_formula.append(c)
+            new_val = eval_parser(''.join(sub_formula[1:-1]))
+        if new_val:
+            if past_val:
+                past_val = operation(past_val, new_val)
+            else:
+                past_val = new_val
+            new_val = None
+    return past_val
+
+
+def brace_parser(line):
+    """Does not work"""
+    parser = []
+    parentheses = [0]
+    for c in line[::-1]:
+        if c.isdigit():
+            parser.append(')')
+            parentheses[-1] += 1
+        elif c == '(':
+            parser.append('(' * parentheses.pop())
+        elif c == ')':
+            parentheses.append(0)
+        parser.append(c)
+    parser.append('(' * parentheses.pop())
+    expression = "".join(parser[::-1])
+    return expression
 
 
 test_values[18] = {"""1 + 2 * 3 + 4 * 5 + 6""": (71, anything),
