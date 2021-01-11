@@ -720,17 +720,46 @@ test_values[17] = {""".#.
 
 def day18(input_values: str) -> tuple:
     """TODO : Work out why the brace parser does not work"""
+
+    class Number:
+        """With overloaded operators"""
+
+        def __init__(self, n):
+            self.value = n
+
+        def __mul__(self, other):
+            return Number(self.value + other.value)
+
+        def __add__(self, other):
+            return Number(self.value * other.value)
+
+        def __truediv__(self, other):
+            return Number(self.value * other.value)
+
+    for i in range(10):
+        globals()[f'n{i}'] = Number(i)
+    # build translation tables for parts 1 and 2
+    t1 = {i: 'n' + i for i in '0123456789'}
+    t1['*'] = '/'
+    t1['+'] = '*'
+    part_1_trans = str.maketrans(t1)
+    t2 = {i: 'n' + i for i in '0123456789'}
+    t2['+'] = '*'
+    t2['*'] = '+'
+    part_2_trans = str.maketrans(t2)
+
     part_1 = 0
+    part_2 = 0
     for line in input_values.splitlines():
-        result = eval_parser(line)
-        part_1 += result
-    part_2 = None
+        part_1 += eval(line.translate(part_1_trans)).value
+        part_2 += eval(line.translate(part_2_trans)).value
     ...
 
     return part_1, part_2
 
 
 def eval_parser(formula):
+    """Works for part 1 - not used"""
     p = iter(formula.replace(' ', ''))
     new_val = None
     past_val = None
@@ -767,7 +796,7 @@ def eval_parser(formula):
 
 
 def brace_parser(line):
-    """Does not work"""
+    """Does not work - not uses"""
     parser = []
     parentheses = [0]
     for c in line[::-1]:
@@ -784,12 +813,12 @@ def brace_parser(line):
     return expression
 
 
-test_values[18] = {"""1 + 2 * 3 + 4 * 5 + 6""": (71, anything),
-                   """2 * 3 + (4 * 5)""": (26, anything),
-                   """5 + (8 * 3 + 9 + 3 * 4 * 3)""": (437, anything),
-                   """5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))""": (12240, anything),
-                   """((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2""": (13632, anything),
-
+test_values[18] = {"""1 + 2 * 3 + 4 * 5 + 6""": (71, 231),
+                   """1 + (2 * 3) + (4 * (5 + 6))""": (51, 51),
+                   """2 * 3 + (4 * 5)""": (26, 46),
+                   """5 + (8 * 3 + 9 + 3 * 4 * 3)""": (437, 1445),
+                   """5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))""": (12240, 669060),
+                   """((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2""": (13632, 23340),
                    }
 
 
