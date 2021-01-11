@@ -737,7 +737,7 @@ def day18(input_values: str) -> tuple:
             return Number(self.value * other.value)
 
     for i in range(10):
-        globals()[f'n{i}'] = Number(i)
+        locals()[f'n{i}'] = Number(i)
     # build translation tables for parts 1 and 2
     t1 = {i: 'n' + i for i in '0123456789'}
     t1['*'] = '/'
