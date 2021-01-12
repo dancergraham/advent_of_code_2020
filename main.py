@@ -900,29 +900,53 @@ sqjhc mxmxvkd sbzzf (contains fish)""": (5, anything),
 def day22(input_values: str) -> tuple:
     """Cards with crab"""
 
-    def simple_round(hand_1, hand_2):
-        pass
+    def simple_round(hand_1, hand_2) -> tuple:
+        if hand_1[0] > hand_2[0]:
+            return 1, 2
+        return 2, 1
 
-    player_1, player_2 = [deque([int(x) for x in player.splitlines()[1:]]) for player in input_values.split('\n\n')]
+    player_1, player_2 = [deque([int(x) for x in section.splitlines()[1:]]) for section in input_values.split('\n\n')]
     player = {1: player_1,
               2: player_2}
     while player[1] and player[2]:
         winner, loser = simple_round(player[1], player[2])
-        card1, card2 = player[1].popleft(), player[2].popleft()
-        if card1 > card2:
-            player[1].append(card1)
-            player[1].append(card2)
-        elif card2 > card1:
-            player[2].append(card2)
-            player[2].append(card1)
-    winner = max(player[1], player[2])
-    score = sum([card * i for i, card in enumerate(reversed(winner), 1)])
-    part_1 = score
+        player[winner].append(player[winner].popleft())
+        player[winner].append(player[loser].popleft())
+    part_1 = sum([card * i for i, card in enumerate(reversed(player[winner]), 1)])
 
-    seen = set()
+    def recursive_round(hand_1, hand_2) -> tuple:
+        seen = set()
+        player = {1: hand_1, 2: hand_2}
+        while hand_1 and hand_2:
+            print(hand_1, hand_2)
+            if (hands := (tuple(hand_1), tuple(hand_2))) in seen:
+                print("seen it", hand_1)
+                return ("Seen", 0)
+            seen.add(hands)
+            card = {}
+            card[1], card[2] = hand_1.popleft(), hand_2.popleft()
+            if (card[1] <= len(hand_1)) and (card[2] <= len(hand_2)):
+                winner, loser = recursive_round(deque(list(hand_1)[:card[1]]), deque(list(hand_2)[:card[2]]))
+            elif card[1] > card[2]:
+                winner, loser = 1, 2
+            else:
+                winner, loser = 2, 1
+            if winner == "Seen":
+                return "Seen", 0
+            player[winner].append(card[winner])
+            player[winner].append(card[loser])
+        return winner, loser
 
-    part_2 = None
-    ...
+    player_1, player_2 = [deque([int(x) for x in section.splitlines()[1:]]) for section in input_values.split('\n\n')]
+    player = {1: player_1,
+              2: player_2}
+    winner, loser = recursive_round(player_1, player_2)
+    if winner == "Seen":
+        winner = 1
+        player[1].append(player_1.popleft())
+        player[1].append(player_2.popleft())
+    print("Winner : ", player[winner])
+    part_2 = sum([card * i for i, card in enumerate(reversed(player[winner]), 1)])
 
     return part_1, part_2
 
@@ -940,7 +964,7 @@ Player 2:
 4
 7
 10
-""": (306, anything),
+""": (306, 291),
                    }
 
 
@@ -1128,7 +1152,7 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    day = 18
+    day = 23
     day_function = eval(f'day{day}')
     if today.month == 12:
         print('Merry Christmas')
