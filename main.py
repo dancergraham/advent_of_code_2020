@@ -719,7 +719,8 @@ test_values[17] = {""".#.
 
 
 def day18(input_values: str) -> tuple:
-    """TODO : Work out why the brace parser does not work"""
+    """Map operators to overloaded methods in order to achieve the desired operation order
+    TODO : Work out why the brace parser does not work"""
 
     class Number:
         """With overloaded operators"""
@@ -736,13 +737,17 @@ def day18(input_values: str) -> tuple:
         def __truediv__(self, other):
             return Number(self.value * other.value)
 
+    # create a number object for each digit 0-9
     for i in range(10):
         locals()[f'n{i}'] = Number(i)
+
     # build translation tables for parts 1 and 2
+    # part 1 : same precedence
     t1 = {i: 'n' + i for i in '0123456789'}
     t1['*'] = '/'
     t1['+'] = '*'
     part_1_trans = str.maketrans(t1)
+    # part 2 : + before *
     t2 = {i: 'n' + i for i in '0123456789'}
     t2['+'] = '*'
     t2['*'] = '+'
@@ -753,7 +758,6 @@ def day18(input_values: str) -> tuple:
     for line in input_values.splitlines():
         part_1 += eval(line.translate(part_1_trans)).value
         part_2 += eval(line.translate(part_2_trans)).value
-    ...
 
     return part_1, part_2
 
