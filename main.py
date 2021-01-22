@@ -770,10 +770,8 @@ def eval_parser(formula):
     operation = None
     braces = 0
     ops = {'+': add,
-           '-': sub,
            '*': mul,
-           '/': truediv,
-           }
+           }  # No subtraction or division
     for c in p:
         if c.isdigit():
             new_val = int(c)
@@ -914,8 +912,7 @@ def day22(input_values: str) -> tuple:
         player[winner].append(player[loser].popleft())
     part_1 = sum([card * i for i, card in enumerate(reversed(player[winner]), 1)])
 
-    def recursive_round(hand_1, hand_2) -> tuple:
-        seen = set()
+    def recursive_round(hand_1, hand_2, seen) -> tuple:
         player = {1: hand_1, 2: hand_2}
         while hand_1 and hand_2:
             print(hand_1, hand_2)
@@ -926,7 +923,8 @@ def day22(input_values: str) -> tuple:
             card = {}
             card[1], card[2] = hand_1.popleft(), hand_2.popleft()
             if (card[1] <= len(hand_1)) and (card[2] <= len(hand_2)):
-                winner, loser = recursive_round(deque(list(hand_1)[:card[1]]), deque(list(hand_2)[:card[2]]))
+                winner, loser = recursive_round(deque(list(hand_1)[:card[1]]), deque(list(hand_2)[:card[2]]),
+                                                seen.copy())
             elif card[1] > card[2]:
                 winner, loser = 1, 2
             else:
@@ -937,10 +935,12 @@ def day22(input_values: str) -> tuple:
             player[winner].append(card[loser])
         return winner, loser
 
+    seen = set()
+
     player_1, player_2 = [deque([int(x) for x in section.splitlines()[1:]]) for section in input_values.split('\n\n')]
     player = {1: player_1,
               2: player_2}
-    winner, loser = recursive_round(player_1, player_2)
+    winner, loser = recursive_round(player_1, player_2, seen)
     if winner == "Seen":
         winner = 1
         player[1].append(player_1.popleft())
@@ -1152,7 +1152,7 @@ test_values[0] = {"""""": (anything, anything),
 
 if __name__ == '__main__':
     today = date.today()
-    day = 23
+    day = 22
     day_function = eval(f'day{day}')
     if today.month == 12:
         print('Merry Christmas')
